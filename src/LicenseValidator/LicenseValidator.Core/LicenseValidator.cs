@@ -2,26 +2,30 @@
 using System.Configuration;
 using System.Linq;
 using System.Net;
+using System.Text;
+using System.Web;
+using FlitBit.Core;
 using FlitBit.Core.Net;
+using FlitBit.IoC;
 using FlitBit.IoC.Meta;
+using FlitBit.Represent.Json;
 using LicenseValidator.Core.Dtos;
 using RedRocket;
 using RedRocket.Utilities.Core.Validation;
 
 namespace LicenseValidator.Core
 {
-
     public interface ILicenseValidator
     {
         ILicenseValidationResponse ValidateLicenseByState(IValidateLicenseByState request);
-        ILicenseValidationResponse ValidateLicenseByOrder(IValidateLicenseByState request);
+        ILicenseValidationResponse ValidateLicenseByOrder(IValidateLicenseByOrder request);
     }
 
     [ContainerRegister(typeof(ILicenseValidator), RegistrationBehaviors.Default)]
     public class LicenseValidator : ILicenseValidator
     {
-        const string StateValidationPath = "validate/location";
-        const string OrderValidationPath = "validate/order";
+        const string StateValidationPath = "licenses/validate/location";
+        const string OrderValidationPath = "licenses/validate/order";
         protected string PurchaseOrderUrl { get; private set; }
 
         public LicenseValidator()
@@ -33,8 +37,7 @@ namespace LicenseValidator.Core
 
         public LicenseValidator(string url)
         {
-            PurchaseOrderUrl = ConfigurationManager.AppSettings["api_purchaseorders"];
-
+            PurchaseOrderUrl = url;
         }
 
         public ILicenseValidationResponse ValidateLicenseByState(IValidateLicenseByState request)
@@ -43,38 +46,32 @@ namespace LicenseValidator.Core
             var errors = request.GetValidationErrors().ToList();
             if (errors.Any())
                 throw new ObjectValidationException(errors);
-            ILicenseValidationResponse licenseValidationResponse = null;
-            url.MakeResourceRequest().HttpPostJson(request, (exception, response) =>
-                                                                         {
-                                                                             if (response.StatusCode == HttpStatusCode.OK)
-                                                                             {
-                                                                                 licenseValidationResponse = response.DeserializeResponse<ILicenseValidationResponse>();
-                                                                             }
+            var resp = url.MakeResourceRequest().ParallelPost(Encoding.UTF8.GetBytes(request.ToJson()), "application/json", response =>
+                                                                                                                            {
+                                                                                                                                if (response.StatusCode == HttpStatusCode.OK)
+                                                                                                                                    return Create.New<IJsonRepresentation<ILicenseValidationResponse>>().RestoreItem(response.GetResponseBodyAsString());
+                                                                                                                                throw new HttpException((int)response.StatusCode, response.GetResponseBodyAsString());
+                                                                                                                            }).AwaitValue();
 
-                                                                         });
-
-            return licenseValidationResponse;
+            return resp;
 
         }
 
-        public ILicenseValidationResponse ValidateLicenseByOrder(IValidateLicenseByState request)
+        public ILicenseValidationResponse ValidateLicenseByOrder(IValidateLicenseByOrder request)
         {
             var url = new Uri(PurchaseOrderUrl + "/{0}".P(OrderValidationPath));
             var errors = request.GetValidationErrors().ToList();
             if (errors.Any())
                 throw new ObjectValidationException(errors);
 
-            ILicenseValidationResponse licenseValidationResponse = null;
-            url.MakeResourceRequest().HttpPostJson(request, (exception, response) =>
-                                                            {
-                                                                if (response.StatusCode == HttpStatusCode.OK)
-                                                                {
-                                                                    licenseValidationResponse = response.DeserializeResponse<ILicenseValidationResponse>();
-                                                                }
+            var resp = url.MakeResourceRequest().ParallelPost(Encoding.UTF8.GetBytes(request.ToJson()), "application/json", response =>
+                                                                                                                            {
+                                                                                                                                if (response.StatusCode == HttpStatusCode.OK)
+                                                                                                                                    return Create.New<IJsonRepresentation<ILicenseValidationResponse>>().RestoreItem(response.GetResponseBodyAsString());
+                                                                                                                                throw new HttpException((int)response.StatusCode, response.GetResponseBodyAsString());
+                                                                                                                            }).AwaitValue();
 
-                                                            });
-
-            return licenseValidationResponse;
+            return resp;
         }
     }
 }

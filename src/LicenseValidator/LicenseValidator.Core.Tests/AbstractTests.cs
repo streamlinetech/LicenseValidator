@@ -1,4 +1,5 @@
-﻿using FlitBit.Wireup;
+﻿using System.Linq;
+using FlitBit.Wireup;
 
 namespace Validator.Core.Tests
 {
