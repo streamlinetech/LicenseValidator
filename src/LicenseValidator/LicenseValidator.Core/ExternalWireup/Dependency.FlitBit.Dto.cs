@@ -1,0 +1,1 @@
+[assembly: FlitBit.Wireup.Meta.WireupDependency(typeof(FlitBit.Dto.AssemblyWireup))]
