@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <version>$version$</version>
+    <authors>$author$</authors>
+    <owners />
+    <id>LicenseValidator</id>
+    <title>License Validator Client</title>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>License Validation Client for Purchase Orders</description>
+    <dependencies>
+      <group targetFramework="net45">
+        <dependency id="FlitBit.Dto" version="2.5.0" />
+        <dependency id="FlitBit.Core" version="2.11.6" />
+        <dependency id="FlitBit.Represent" version="1.2.3"/>
+        <dependency id="RedRocket.Utilities.Core" version="1.0.7"/>
+      </group>
+    </dependencies>
+  </metadata>
+  <files />
+</package>
