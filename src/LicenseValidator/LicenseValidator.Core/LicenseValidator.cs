@@ -3,7 +3,11 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 using System.Web;
+using FlitBit.Core;
+using FlitBit.Core.Net;
 using FlitBit.IoC;
 using FlitBit.IoC.Meta;
 using FlitBit.Represent.Json;
@@ -53,30 +57,30 @@ namespace LicenseValidator.Core
             if (errors.Any())
                 throw new ObjectValidationException(errors);
 
-            var httpResponse = Client.PostAsJsonAsync(url, request).Result;
-
-            if (httpResponse == null)
-                throw new NullReferenceException("HttpResponse is null");
-
-            if (httpResponse.IsSuccessStatusCode)
-            {
-                var json = httpResponse.Content.ReadAsStringAsync().Result;
-                if (!string.IsNullOrEmpty(json))
-                    return Representation.RestoreItem(json);
-
-                throw new LicenseValidationException()
-                      {
-                          StatusCode = httpResponse.StatusCode,
-                          HttpResponse = httpResponse
-                      };
-            }
+            return PostValidationRequest(request, url);
 
 
-            throw new LicenseValidationException()
-                  {
-                      StatusCode = httpResponse.StatusCode,
-                      HttpResponse = httpResponse
-                  };
+        }
+
+        ILicenseValidationResponse PostValidationRequest<T>(T request, Uri url)
+        {
+            var json = request.ToJson();
+            var jsonBytes = Encoding.UTF8.GetBytes(json);
+            var completion = url.MakeResourceRequest().ParallelPost<ILicenseValidationResponse>(jsonBytes, "application/json", response =>
+                                                                                  {
+                                                                                      if (response.StatusCode == HttpStatusCode.OK)
+                                                                                      {
+                                                                                          var responseJson = response.GetResponseBodyAsString();
+                                                                                          if (!string.IsNullOrEmpty(responseJson))
+                                                                                              return Representation.RestoreItem(responseJson);
+                                                                                      }
+
+                                                                                      throw new LicenseValidationException()
+                                                                                            {
+                                                                                                StatusCode = response.StatusCode
+                                                                                            };
+                                                                                  });
+            return completion.AwaitValue();
         }
 
         public ILicenseValidationResponse ValidateLicenseByOrder(IValidateLicenseByOrder request)
@@ -86,30 +90,7 @@ namespace LicenseValidator.Core
             if (errors.Any())
                 throw new ObjectValidationException(errors);
 
-            var httpResponse = Client.PostAsJsonAsync(url, request).Result;
-
-            if (httpResponse == null)
-                throw new NullReferenceException("HttpResponse is null");
-
-            if (httpResponse.IsSuccessStatusCode)
-            {
-                var json = httpResponse.Content.ReadAsStringAsync().Result;
-                if (!string.IsNullOrEmpty(json))
-                    return Representation.RestoreItem(json);
-
-                throw new LicenseValidationException()
-                      {
-                          StatusCode = httpResponse.StatusCode,
-                          HttpResponse = httpResponse
-                      };
-            }
-
-
-            throw new LicenseValidationException()
-                  {
-                      StatusCode = httpResponse.StatusCode,
-                      HttpResponse = httpResponse
-                  };
+            return PostValidationRequest(request, url);
         }
     }
 }

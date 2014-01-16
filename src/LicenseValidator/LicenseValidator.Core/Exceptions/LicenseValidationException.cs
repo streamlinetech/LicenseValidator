@@ -8,5 +8,16 @@ namespace LicenseValidator.Core.Exceptions
     {
         public HttpStatusCode StatusCode { get; set; }
         public HttpResponseMessage HttpResponse { get; set; }
+
+        public LicenseValidationException()
+        {
+            
+        }
+
+        public LicenseValidationException(Exception ex) : base ("License Exception", ex)
+        {
+            
+        }
+        
     }
 }
