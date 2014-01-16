@@ -8,5 +8,6 @@ namespace LicenseValidator.Core.Dtos
     {
         IEnumerable<ILicense> Licenses { get; set; }
         bool IsValidAndShippable { get; set; }
+        bool DoesLicenseExpireWithinThreshold { get; set; }
     }
 }
