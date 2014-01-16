@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Web;
-using FlitBit.Core;
-using FlitBit.Core.Net;
+using System.Net.Http;
 using FlitBit.IoC;
 using FlitBit.IoC.Meta;
 using FlitBit.Represent.Json;
@@ -28,11 +24,16 @@ namespace LicenseValidator.Core
         const string OrderValidationPath = "licenses/validate/order";
         protected string PurchaseOrderUrl { get; private set; }
 
+        HttpClient Client { get; set; }
+
+        IJsonRepresentation<ILicenseValidationResponse> Representation { get; set; }
+
         public LicenseValidator()
         {
             // <add key="api_purchaseorders" value="http://api-purchaseorders.streamlinedb.dev/v1" />
             PurchaseOrderUrl = ConfigurationManager.AppSettings["api_purchaseorders"];
-
+            Client = new HttpClient();
+            Representation = Create.New<IJsonRepresentation<ILicenseValidationResponse>>();
         }
 
         public LicenseValidator(string url)
@@ -46,15 +47,9 @@ namespace LicenseValidator.Core
             var errors = request.GetValidationErrors().ToList();
             if (errors.Any())
                 throw new ObjectValidationException(errors);
-            var resp = url.MakeResourceRequest().ParallelPost(Encoding.UTF8.GetBytes(request.ToJson()), "application/json", response =>
-                                                                                                                            {
-                                                                                                                                if (response.StatusCode == HttpStatusCode.OK)
-                                                                                                                                    return Create.New<IJsonRepresentation<ILicenseValidationResponse>>().RestoreItem(response.GetResponseBodyAsString());
-                                                                                                                                throw new HttpException((int)response.StatusCode, response.GetResponseBodyAsString());
-                                                                                                                            }).AwaitValue();
 
-            return resp;
-
+            var httpResponse = Client.PostAsJsonAsync(url, request).Result;
+            return Representation.RestoreItem(httpResponse.Content.ReadAsStringAsync().Result);
         }
 
         public ILicenseValidationResponse ValidateLicenseByOrder(IValidateLicenseByOrder request)
@@ -64,14 +59,8 @@ namespace LicenseValidator.Core
             if (errors.Any())
                 throw new ObjectValidationException(errors);
 
-            var resp = url.MakeResourceRequest().ParallelPost(Encoding.UTF8.GetBytes(request.ToJson()), "application/json", response =>
-                                                                                                                            {
-                                                                                                                                if (response.StatusCode == HttpStatusCode.OK)
-                                                                                                                                    return Create.New<IJsonRepresentation<ILicenseValidationResponse>>().RestoreItem(response.GetResponseBodyAsString());
-                                                                                                                                throw new HttpException((int)response.StatusCode, response.GetResponseBodyAsString());
-                                                                                                                            }).AwaitValue();
-
-            return resp;
+            var httpResponse = Client.PostAsJsonAsync(url, request).Result;
+            return Representation.RestoreItem(httpResponse.Content.ReadAsStringAsync().Result);
         }
     }
 }
