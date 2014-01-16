@@ -59,7 +59,17 @@ namespace LicenseValidator.Core
                 throw new NullReferenceException("HttpResponse is null");
 
             if (httpResponse.IsSuccessStatusCode)
-                return Representation.RestoreItem(httpResponse.Content.ReadAsStringAsync().Result);
+            {
+                var json = httpResponse.Content.ReadAsStringAsync().Result;
+                if (!string.IsNullOrEmpty(json))
+                    return Representation.RestoreItem(json);
+
+                throw new LicenseValidationException()
+                      {
+                          StatusCode = httpResponse.StatusCode,
+                          HttpResponse = httpResponse
+                      };
+            }
 
 
             throw new LicenseValidationException()
@@ -82,7 +92,18 @@ namespace LicenseValidator.Core
                 throw new NullReferenceException("HttpResponse is null");
 
             if (httpResponse.IsSuccessStatusCode)
-                return Representation.RestoreItem(httpResponse.Content.ReadAsStringAsync().Result);
+            {
+                var json = httpResponse.Content.ReadAsStringAsync().Result;
+                if (!string.IsNullOrEmpty(json))
+                    return Representation.RestoreItem(json);
+
+                throw new LicenseValidationException()
+                      {
+                          StatusCode = httpResponse.StatusCode,
+                          HttpResponse = httpResponse
+                      };
+            }
+
 
             throw new LicenseValidationException()
                   {
