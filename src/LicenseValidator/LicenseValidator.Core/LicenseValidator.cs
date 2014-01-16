@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Configuration;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Web;
 using FlitBit.IoC;
 using FlitBit.IoC.Meta;
 using FlitBit.Represent.Json;
+using FlitBit.Wireup;
 using LicenseValidator.Core.Dtos;
+using LicenseValidator.Core.Exceptions;
 using RedRocket;
 using RedRocket.Utilities.Core.Validation;
 
@@ -30,6 +34,7 @@ namespace LicenseValidator.Core
 
         public LicenseValidator()
         {
+            WireupCoordinator.SelfConfigure();
             // <add key="api_purchaseorders" value="http://api-purchaseorders.streamlinedb.dev/v1" />
             PurchaseOrderUrl = ConfigurationManager.AppSettings["api_purchaseorders"];
             Client = new HttpClient();
@@ -49,7 +54,19 @@ namespace LicenseValidator.Core
                 throw new ObjectValidationException(errors);
 
             var httpResponse = Client.PostAsJsonAsync(url, request).Result;
-            return Representation.RestoreItem(httpResponse.Content.ReadAsStringAsync().Result);
+
+            if (httpResponse == null)
+                throw new NullReferenceException("HttpResponse is null");
+
+            if (httpResponse.IsSuccessStatusCode)
+                return Representation.RestoreItem(httpResponse.Content.ReadAsStringAsync().Result);
+
+
+            throw new LicenseValidationException()
+                  {
+                      StatusCode = httpResponse.StatusCode,
+                      HttpResponse = httpResponse
+                  };
         }
 
         public ILicenseValidationResponse ValidateLicenseByOrder(IValidateLicenseByOrder request)
@@ -60,7 +77,18 @@ namespace LicenseValidator.Core
                 throw new ObjectValidationException(errors);
 
             var httpResponse = Client.PostAsJsonAsync(url, request).Result;
-            return Representation.RestoreItem(httpResponse.Content.ReadAsStringAsync().Result);
+
+            if (httpResponse == null)
+                throw new NullReferenceException("HttpResponse is null");
+
+            if (httpResponse.IsSuccessStatusCode)
+                return Representation.RestoreItem(httpResponse.Content.ReadAsStringAsync().Result);
+
+            throw new LicenseValidationException()
+                  {
+                      StatusCode = httpResponse.StatusCode,
+                      HttpResponse = httpResponse
+                  };
         }
     }
 }

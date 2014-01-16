@@ -1,10 +1,20 @@
 ﻿using FlitBit.IoC;
+using FlitBit.Wireup;
+using FlitBit.Wireup.Meta;
 using LicenseValidator.Core.Dtos;
+
+[assembly: WireupDependency(typeof(FlitBit.Wireup.AssemblyWireup))]
+[assembly: WireupDependency(typeof(FlitBit.Dto.AssemblyWireup))]
+[assembly: WireupDependency(typeof(FlitBit.Represent.AssemblyWireup))]
 
 namespace LicenseValidator.Core
 {
     public static class Validate
     {
+        static Validate()
+        {
+            WireupCoordinator.SelfConfigure();
+        }
         public static ILicenseValidationResponse LicenseByState(int shipFromLocationId, string countryCode, string stateCodeOrName)
         {
             var request = SetupLicenseByStateRequest(shipFromLocationId, countryCode, stateCodeOrName);

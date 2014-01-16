@@ -80,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\LicenseValidationException.cs" />
     <Compile Include="ExternalWireup\Dependency.FlitBit.Represent.cs" />
     <Compile Include="LicenseValidator.cs" />
     <Compile Include="Dtos\IBasicValidateLicense.cs" />
