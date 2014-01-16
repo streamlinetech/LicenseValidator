@@ -14,7 +14,6 @@
         <dependency id="FlitBit.Core" version="2.11.6" />
         <dependency id="FlitBit.Represent" version="1.2.3"/>
         <dependency id="RedRocket.Utilities.Core" version="1.0.7"/>
-        <dependency id="Microsoft.AspNet.WebApi.Client" version="5.0.0" />
       </group>
     </dependencies>
   </metadata>
