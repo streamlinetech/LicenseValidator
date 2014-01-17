@@ -9,6 +9,7 @@ namespace LicenseValidator.Core.Dtos
         ILocation Location { get; set; }
         string LicenseNumber { get; set; }
         string LicenseTypeCode { get; set; }
+        string LicenseTypeDescription { get; set; }
         IState State { get; set; }
         DateTime ExpireDate { get; set; }
     }
