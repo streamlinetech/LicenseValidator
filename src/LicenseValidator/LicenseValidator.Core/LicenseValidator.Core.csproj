@@ -76,6 +76,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\DefaultJsonConverter.cs" />
+    <Compile Include="Infrastructure\DefaultJsonSerializerSettings.cs" />
     <Compile Include="Exceptions\LicenseValidationException.cs" />
     <Compile Include="ExternalWireup\Dependency.FlitBit.Represent.cs" />
     <Compile Include="LicenseValidator.cs" />

@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 using System.Web;
 using FlitBit.Core;
 using FlitBit.Core.Net;
-using FlitBit.IoC;
 using FlitBit.IoC.Meta;
 using FlitBit.Represent.Json;
 using FlitBit.Wireup;
 using LicenseValidator.Core.Dtos;
 using LicenseValidator.Core.Exceptions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using RedRocket;
 using RedRocket.Utilities.Core.Validation;
 
@@ -42,7 +43,6 @@ namespace LicenseValidator.Core
             // <add key="api_purchaseorders" value="http://api-purchaseorders.streamlinedb.dev/v1" />
             PurchaseOrderUrl = ConfigurationManager.AppSettings["api_purchaseorders"];
             Client = new HttpClient();
-            Representation = Create.New<IJsonRepresentation<ILicenseValidationResponse>>();
         }
 
         public LicenseValidator(string url)
@@ -66,13 +66,13 @@ namespace LicenseValidator.Core
         {
             var json = request.ToJson();
             var jsonBytes = Encoding.UTF8.GetBytes(json);
-            var completion = url.MakeResourceRequest().ParallelPost<ILicenseValidationResponse>(jsonBytes, "application/json", response =>
+            var completion = url.MakeResourceRequest().ParallelPost(jsonBytes, "application/json", response =>
                                                                                   {
                                                                                       if (response.StatusCode == HttpStatusCode.OK)
                                                                                       {
                                                                                           var responseJson = response.GetResponseBodyAsString();
                                                                                           if (!string.IsNullOrEmpty(responseJson))
-                                                                                              return Representation.RestoreItem(responseJson);
+                                                                                              return JsonConvert.DeserializeObject<ILicenseValidationResponse>(responseJson, DefaultJsonSerializerSettings.Current);
                                                                                       }
 
                                                                                       throw new LicenseValidationException()

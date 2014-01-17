@@ -11,10 +11,10 @@ namespace Validator.Core.Tests
         {
             using (Create.SharedOrNewContainer())
             {
-                //var licenseValidator = Create.New<ILicenseValidator>();
-                //var response = Validate.LicenseByState(8, "USA", "GA");
-                //Assert.NotNull(response);
-                //Assert.True(response.IsValidAndShippable);
+                var licenseValidator = Create.New<ILicenseValidator>();
+                var response = Validate.LicenseByOrder(8, 1154918);
+                Assert.NotNull(response);
+                Assert.False(response.IsValidAndShippable);
             }
         }
     }
