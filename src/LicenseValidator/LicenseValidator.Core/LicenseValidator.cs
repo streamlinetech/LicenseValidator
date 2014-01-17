@@ -4,17 +4,13 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 using FlitBit.Core;
 using FlitBit.Core.Net;
 using FlitBit.IoC.Meta;
-using FlitBit.Represent.Json;
 using FlitBit.Wireup;
 using LicenseValidator.Core.Dtos;
 using LicenseValidator.Core.Exceptions;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using RedRocket;
 using RedRocket.Utilities.Core.Validation;
 
@@ -34,8 +30,6 @@ namespace LicenseValidator.Core
         protected string PurchaseOrderUrl { get; private set; }
 
         HttpClient Client { get; set; }
-
-        IJsonRepresentation<ILicenseValidationResponse> Representation { get; set; }
 
         public LicenseValidator()
         {

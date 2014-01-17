@@ -47,9 +47,6 @@
     <Reference Include="FlitBit.IoC">
       <HintPath>..\packages\FlitBit.IoC.2.13.1\lib\net40\FlitBit.IoC.dll</HintPath>
     </Reference>
-    <Reference Include="FlitBit.Represent">
-      <HintPath>..\packages\FlitBit.Represent.1.2.3\lib\net40\FlitBit.Represent.dll</HintPath>
-    </Reference>
     <Reference Include="FlitBit.Wireup">
       <HintPath>..\packages\FlitBit.Wireup.3.1.0\lib\net40\FlitBit.Wireup.dll</HintPath>
     </Reference>
@@ -78,7 +75,6 @@
     <Compile Include="AbstractTests.cs" />
     <Compile Include="ExternalWireup\Dependency.FlitBit.Dto.cs" />
     <Compile Include="ExternalWireup\Dependency.FlitBit.IoC.cs" />
-    <Compile Include="ExternalWireup\Dependency.FlitBit.Represent.cs" />
     <Compile Include="ExternalWireup\Dependency.FlitBit.Wireup.cs" />
     <Compile Include="LicenseValidatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

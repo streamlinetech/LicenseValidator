@@ -48,9 +48,6 @@
     <Reference Include="FlitBit.IoC">
       <HintPath>..\packages\FlitBit.IoC.2.13.1\lib\net40\FlitBit.IoC.dll</HintPath>
     </Reference>
-    <Reference Include="FlitBit.Represent">
-      <HintPath>..\packages\FlitBit.Represent.1.2.3\lib\net40\FlitBit.Represent.dll</HintPath>
-    </Reference>
     <Reference Include="FlitBit.Wireup">
       <HintPath>..\packages\FlitBit.Wireup.3.1.0\lib\net40\FlitBit.Wireup.dll</HintPath>
     </Reference>
@@ -79,7 +76,6 @@
     <Compile Include="Infrastructure\DefaultJsonConverter.cs" />
     <Compile Include="Infrastructure\DefaultJsonSerializerSettings.cs" />
     <Compile Include="Exceptions\LicenseValidationException.cs" />
-    <Compile Include="ExternalWireup\Dependency.FlitBit.Represent.cs" />
     <Compile Include="LicenseValidator.cs" />
     <Compile Include="Dtos\IBasicValidateLicense.cs" />
     <Compile Include="Dtos\ILicense.cs" />

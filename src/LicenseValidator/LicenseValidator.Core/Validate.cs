@@ -5,7 +5,6 @@ using LicenseValidator.Core.Dtos;
 
 [assembly: WireupDependency(typeof(FlitBit.Wireup.AssemblyWireup))]
 [assembly: WireupDependency(typeof(FlitBit.Dto.AssemblyWireup))]
-[assembly: WireupDependency(typeof(FlitBit.Represent.AssemblyWireup))]
 
 namespace LicenseValidator.Core
 {
