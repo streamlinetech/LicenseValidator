@@ -12,5 +12,6 @@ namespace LicenseValidator.Core.Dtos
         string LicenseTypeDescription { get; set; }
         IState State { get; set; }
         DateTime ExpireDate { get; set; }
+		DateTime IssueDate { get; set; }
     }
 }
